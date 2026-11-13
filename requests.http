@@ -1,0 +1,24 @@
+
+### Valid payment
+POST http://localhost:8080/practice/payments
+Content-Type: application/json
+
+{"amountCents": 5000, "note": "October payment"}
+
+### Negative amount (should fail)
+POST http://localhost:8080/practice/payments
+Content-Type: application/json
+
+{"amountCents": -50}
+
+### Missing amount (should fail)
+POST http://localhost:8080/practice/payments
+Content-Type: application/json
+
+{"note": "forgot the amount"}
+
+### Broken JSON (should fail)
+POST http://localhost:8080/practice/payments
+Content-Type: application/json
+
+{"amountCents": 5000
