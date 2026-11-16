@@ -16,10 +16,7 @@ public class Loan{
     this.amountCents = startingAmount;
     this.balanceCents = startingAmount;
     }
-    public long getBalance(){
-    return balanceCents;
-    }
-
+    
     public long acceptPayment(long paymentAmount){
         if (isPaid()) {
             throw new IllegalStateException("Loan is already paid off");
@@ -36,6 +33,18 @@ public class Loan{
 
     public boolean isPaid(){
         return balanceCents == 0;
+    }
+
+    public UUID getId(){
+        return id; 
+    }
+
+    public long getAmountCents() {
+        return amountCents;
+    }
+
+    public long getBalanceCents() {
+        return balanceCents;
     }
 
 

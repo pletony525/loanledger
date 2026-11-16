@@ -12,7 +12,7 @@ class LoanTest {
     void newLoanBalanceEqualsAmountBorrowed() {
         Loan loan = new Loan(10_000);
 
-        assertEquals(10_000, loan.getBalance());
+        assertEquals(10_000, loan.getBalanceCents());
     }
 
     @Test
@@ -21,7 +21,7 @@ class LoanTest {
 
         loan.acceptPayment(3_000);
 
-        assertEquals(7_000, loan.getBalance());
+        assertEquals(7_000, loan.getBalanceCents());
     }
 
     @Test
@@ -32,7 +32,7 @@ class LoanTest {
         loan.acceptPayment(2_000);
         loan.acceptPayment(1_500);
 
-        assertEquals(3_500, loan.getBalance());
+        assertEquals(3_500, loan.getBalanceCents());
     }
 
     @Test
@@ -41,7 +41,7 @@ class LoanTest {
 
         loan.acceptPayment(10_000);
 
-        assertEquals(0, loan.getBalance());
+        assertEquals(0, loan.getBalanceCents());
         assertTrue(loan.isPaid());
     }
 
@@ -69,7 +69,7 @@ class LoanTest {
         Loan loan = new Loan(10_000);
 
         assertThrows(IllegalArgumentException.class, () -> loan.acceptPayment(10_001));
-        assertEquals(10_000, loan.getBalance());
+        assertEquals(10_000, loan.getBalanceCents());
     }
 
     @Test
@@ -78,6 +78,6 @@ class LoanTest {
         loan.acceptPayment(10_000);
 
         assertThrows(IllegalStateException.class, () -> loan.acceptPayment(1));
-        assertEquals(0, loan.getBalance());
+        assertEquals(0, loan.getBalanceCents());
     }
 }
