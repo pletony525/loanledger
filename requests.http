@@ -1,24 +1,60 @@
 
-### Valid payment
-POST http://localhost:8080/practice/payments
+### Opens a loan
+# @name openLoan
+POST http://localhost:8080/loans 
 Content-Type: application/json
 
-{"amountCents": 5000, "note": "October payment"}
+{"amountCents": 10000}
 
-### Negative amount (should fail)
-POST http://localhost:8080/practice/payments
+### Get loan
+GET http://localhost:8080/loans/{{openLoan.response.body.$.id}}
+
+### Open a loan with a zero amount (should fail: 400)
+POST http://localhost:8080/loans
 Content-Type: application/json
 
-{"amountCents": -50}
+{"amountCents": 0}
 
-### Missing amount (should fail)
-POST http://localhost:8080/practice/payments
+### Open a loan with a negative amount (should fail: 400)
+POST http://localhost:8080/loans
 Content-Type: application/json
 
-{"note": "forgot the amount"}
+{"amountCents": -500}
 
-### Broken JSON (should fail)
-POST http://localhost:8080/practice/payments
+### Get a loan with an unknown but valid UUID (should fail: 404)
+GET http://localhost:8080/loans/00000000-0000-0000-0000-000000000000
+
+### Get a loan with a non-UUID id (should fail: 400)
+GET http://localhost:8080/loans/not-a-uuid
+
+### Pay part of the loan's balance (should succeed: 200)
+POST http://localhost:8080/loans/{{openLoan.response.body.$.id}}/pay
 Content-Type: application/json
 
-{"amountCents": 5000
+{"amountCents": 4000}
+
+### Pay more than the remaining balance (should fail: 400)
+POST http://localhost:8080/loans/{{openLoan.response.body.$.id}}/pay
+Content-Type: application/json
+
+{"amountCents": 999999}
+
+### Open a loan to pay off completely
+# @name loanToPayOff
+POST http://localhost:8080/loans
+Content-Type: application/json
+
+{"amountCents": 5000}
+
+### Pay off that loan exactly (should succeed: 200)
+POST http://localhost:8080/loans/{{loanToPayOff.response.body.$.id}}/pay
+Content-Type: application/json
+
+{"amountCents": 5000}
+
+### Try to pay the already-paid-off loan again (should fail: 409)
+POST http://localhost:8080/loans/{{loanToPayOff.response.body.$.id}}/pay
+Content-Type: application/json
+
+{"amountCents": 100}
+

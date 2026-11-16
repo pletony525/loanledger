@@ -56,16 +56,19 @@ merge → delete branch → `git checkout main` → `git pull`.
 - [x] 5. Return JSON with a record; `@PathVariable`
 - [x] 6. POST + Bean Validation (`@Valid`, `@NotNull`, `@Positive`); practice endpoint
 - [x] 7. `Loan` domain class (plain Java, no Spring) + 9 JUnit tests
-- [ ] 8. **IN PROGRESS:** loan endpoints with in-memory storage
+- [x] 8. loan endpoints with in-memory storage
   - Classes in the `loan` package: `LoanService` (`@Service`, `ConcurrentHashMap<UUID, Loan>`),
     `LoanController` (`@RestController`, `@RequestMapping("/loans")`), `LoanNotFoundException`,
     `OpenLoanRequest`, `PaymentRequest` (moved here, `note` field removed), `LoanResponse` with
     a static `from(Loan)` method.
-  - `ApiExceptionHandler` (`@RestControllerAdvice`) in the root package:
-    `IllegalArgumentException` → 400, `LoanNotFoundException` → 404, using `ProblemDetail`.
+  - `ApiExceptionHandler` (`@RestControllerAdvice`), currently in the `loan` package (plan said
+    root package — revisit if exception handling grows beyond loans):
+    `IllegalArgumentException` → 400, `LoanNotFoundException` → 404,
+    `IllegalStateException` (paying an already-paid-off loan) → 409. Returns `ResponseEntity<String>`
+    for now, not `ProblemDetail`.
   - Delete `PracticePaymentController`.
   - Done when: open → 201, get → 200, pay → 200, overpay → 400, unknown id → 404,
-    non-UUID → 400, tests still pass.
+    non-UUID → 400, tests still pass. **Verified manually via `requests.http`.**
   - Open question to discuss on Day 2: is the balance safe when two payments hit the same
     loan at once? (No: lost update. The 200-payment test will show it.)
 
@@ -91,6 +94,7 @@ merge → delete branch → `git checkout main` → `git pull`.
   (encapsulation).
 - Public constructor for now; switch to static factory methods (`Loan.open`, `Loan.rebuild`)
   on Day 2.
-- All rule violations throw `IllegalArgumentException`. Paying a paid-off loan is already
-  covered by the "payment exceeds balance" rule.
+- Most rule violations throw `IllegalArgumentException` → 400. Paying an already-paid-off
+  loan throws `IllegalStateException` → 409 instead (a conflict with the resource's current
+  state, distinct from a bad request).
 - Return `LoanResponse` DTOs, never `Loan`, so the API shape doesn't depend on domain internals.
