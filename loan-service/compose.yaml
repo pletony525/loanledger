@@ -1,0 +1,9 @@
+services:
+  postgres:
+    image: postgres:17
+    environment:
+      POSTGRES_DB: loanledger
+      POSTGRES_USER: loanledger
+      POSTGRES_PASSWORD: secret
+    ports:
+      - "5432"
